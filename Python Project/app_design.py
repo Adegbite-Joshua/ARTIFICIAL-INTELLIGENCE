@@ -308,11 +308,11 @@ class GTABankATM:
                 font=("Arial", 14, "bold")).pack(pady=10)
         
         tk.Label(balance_frame, text="Available Balance:", bg="black", fg="white").pack()
-        tk.Label(balance_frame, text="$2,450.00", bg="black", fg="yellow",
+        tk.Label(balance_frame, text=f"£{self.user_details['balance']:2d}", bg="black", fg="yellow",
                 font=("Arial", 18, "bold")).pack(pady=10)
         
-        tk.Label(balance_frame, text="Account: 2087654321", bg="black", fg="white").pack()
-        tk.Label(balance_frame, text="John Doe", bg="black", fg="white").pack()
+        tk.Label(balance_frame, text=f"Account: {self.user_details['account_number']}", bg="black", fg="white").pack()
+        tk.Label(balance_frame, text=f"{self.user_details['first_name']} {self.user_details['last_name']}", bg="black", fg="white").pack()
         
         self.add_back_button()
 

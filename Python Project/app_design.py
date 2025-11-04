@@ -7,9 +7,9 @@ database = Database()
 class GTABankATM:
     def __init__(self):
         self.window_gui = tk.Tk()
-        self.window_gui.geometry("350x550")  # Increased height for error box
+        self.window_gui.geometry("350x550")
         self.window_gui.title("GTA Bank ATM")
-        self.window_gui.config(bg="black")
+        self.window_gui.config(bg="black")        
         
         # State variables
         self.current_screen = "main"
@@ -578,6 +578,12 @@ class GTABankATM:
         print("========================")
         
         self.show_screen("purchase_success")
+
+    def is_user_authenticated(self):
+        if not self.user_details:         
+            self.show_error("Please sign in to proceed")
+            self.render_signin()
+        
 
     def render_bills(self):
         form_frame = tk.Frame(self.content_frame, bg="black")

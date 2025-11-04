@@ -1,5 +1,4 @@
 from app_design import GTABankATM
-from user import User
 import requests
 
 # user_one = User()

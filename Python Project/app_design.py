@@ -584,7 +584,6 @@ class GTABankATM:
             self.show_error("Please sign in to proceed")
             self.render_signin()
         
-
     def render_bills(self):
         form_frame = tk.Frame(self.content_frame, bg="black")
         form_frame.pack(pady=10)

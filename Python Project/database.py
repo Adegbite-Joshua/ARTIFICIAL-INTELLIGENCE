@@ -1,6 +1,7 @@
 import random
 import pymysql as pyms
 import bcrypt
+import requests
 
 
 
@@ -14,6 +15,7 @@ class Database:
         self.cursor = self.connection.cursor()
         print("Cursor connected")
         
+        self.bank_lists = null
         try:
             self.cursor.execute("CREATE DATABASE gta_bank")
             print("Database created")
@@ -78,4 +80,11 @@ class Database:
             print(e)
             return (False, "Something went wrong", None)
                 
-    
+    def fetch_bank_list(self):
+        if self.bank_lists:
+            return self.bank_lists
+        
+        json_res = requests.get("https://jsonplaceholder.typicode.com/comments")
+        lists = json_res.json()
+        self.bank_lists = lists
+        return lists

@@ -47,7 +47,7 @@ class GTABankATM:
 
     def show_screen(self, screen_name, message=None, account_number=None):
         self.current_screen = screen_name
-        self.clear_error()  # Clear error when changing screens
+        self.clear_error()
         self.render(account_number=account_number)
 
     def show_error(self, message, duration=5000):
@@ -439,7 +439,12 @@ class GTABankATM:
         print(f"Amount: ${self.deposit_data['amount']}")
         print("====================")
         
-        self.show_screen("deposit_success")
+        success, message = database.deposit(amount=amount, account_number=self.user_details["account_number"])
+        if success:     
+            self.user_details["balance"] += int(amount)       
+            self.show_screen("deposit_success")
+        else:
+            self.show_error(message=message)
 
     def render_deposit_success(self):
         success_frame = tk.Frame(self.content_frame, bg="black")
@@ -449,7 +454,7 @@ class GTABankATM:
                 font=("Arial", 16, "bold")).pack(pady=10)
         tk.Label(success_frame, text=f"Amount: ${self.deposit_data.get('amount', '0')}.00", 
                 bg="black", fg="white").pack()
-        tk.Label(success_frame, text="New Balance: $2,750.00", bg="black", fg="yellow").pack(pady=10)
+        tk.Label(success_frame, text=f"New Balance: ${self.user_details["balance"]}", bg="black", fg="yellow").pack(pady=10)
         
         tk.Button(success_frame, text="OK", command=lambda: self.show_screen("main"),
                  bg="green", fg="white", width=15).pack(pady=20)

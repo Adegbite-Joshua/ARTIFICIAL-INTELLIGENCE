@@ -1,5 +1,6 @@
 import random
 import pymysql as pyms
+from pymysql.cursors import DictCursor
 import bcrypt
 import requests
 
@@ -9,13 +10,13 @@ import requests
 
 class Database:
     def __init__(self):
-        self.connection = pyms.connect(host="127.0.0.1", port=3306, user="root", password="", database="gta_bank")
+        self.connection = pyms.connect(host="127.0.0.1", port=3306, user="root", password="", database="gta_bank",     cursorclass=DictCursor)
         print("Database connected")
 
         self.cursor = self.connection.cursor()
         print("Cursor connected")
         
-        self.bank_lists = null
+        self.bank_lists = None
         try:
             self.cursor.execute("CREATE DATABASE gta_bank")
             print("Database created")
@@ -27,8 +28,7 @@ class Database:
             print("Tables created")
         except Exception as e:
             print(e)
-        
-        
+               
     def create_account(self, first_name: str, last_name: str, email: str, password: str, pin: str)->tuple[bool, str, str]:
         """"
         A database function to execute account creation and save to the database
@@ -64,13 +64,13 @@ class Database:
         
         try:
             query = "SELECT * FROM users WHERE account_number=%s"
-            value = (account_number)
-            self.cursor.execute(query=query, value=value)
+            value = (account_number,)
+            self.cursor.execute(query, value)
             user_details = self.cursor.fetchone()
             if not user_details:
               return (False, "No account found")
-          
-            is_pin_correct = bcrypt.checkpw(pin.encode("utf-8"), user_details.pin)
+
+            is_pin_correct = bcrypt.checkpw(pin.encode("utf-8"), user_details["pin"].encode("utf-8"))
             if not is_pin_correct:
               return (False, "Incorrect pin", None)           
         
@@ -88,3 +88,25 @@ class Database:
         lists = json_res.json()
         self.bank_lists = lists
         return lists
+    
+    def deposit(self, amount, account_number):
+        query = "SELECT * FROM users WHERE account_number=%s"
+        value = (account_number,)
+        self.cursor.execute(query, value)
+        user_details = self.cursor.fetchone()
+        if not user_details:
+            return (False, "No account found")
+        
+        deposit_query = "UPDATE users SET balance = balance + %s WHERE account_number = %s"
+        value = (amount, account_number)
+        self.cursor.execute(deposit_query, value)
+        
+        rows_updated = self.cursor.rowcount
+
+        if rows_updated > 0:
+            return (True, "Successful")
+        else:
+            return (True, "Account not found or update failed")
+        
+        
+        
